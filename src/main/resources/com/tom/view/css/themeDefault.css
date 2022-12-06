@@ -1,0 +1,170 @@
+/* Dark theme*/
+.root {       
+    -fx-text-background-color: black;
+    -fx-text-fill: black;
+    -fx-text-base-color: black;
+    -fx-text-inner-color: black;
+	-fx-selection-bar-text:black;
+	
+	-default-color: #5B8EA9;
+	-hover-color: #87CEEB;
+	-focused-color: derive(#5C637A,50%);
+	
+	-default-text-color:white;
+	-highlight-text-color:#4890F9;
+	-text-inputs-color: black;
+
+	-background-color:#83B1D6;
+	-darker-color:#040d21;
+	-lighter-color:#77B6D2;	
+	-grid-background-gradient:
+	linear-gradient(to top,
+	derive(-darker-color,0%)43%,
+	derive(#87ceeb,-10%)43%,
+	derive(#87ceeb,-10%)80%,
+	-background-color 85%);
+}
+.container{
+	-fx-background-color:-background-color;
+}
+/*--------GridPane --------------------------------------*/
+.grid-pane-class{
+	-fx-background-radius:5;-fx-border-color:white;-fx-border-width:1;
+	-fx-border-radius:5;
+	-fx-background-color:-grid-background-gradient;
+}
+
+HBox{
+	-fx-background-color:-lighter-color;
+}
+/*--------Label----------------------------------------------------*/
+.label,.button .text, .text-field, .check-box{  
+	-fx-font-size:13;
+}
+.errorLabel{
+    -fx-text-fill: red;
+    -fx-font-size: 12pt;
+}
+.headLabel{
+   -fx-alignment:center;
+   -fx-font-size:18;
+}
+.day{
+	-fx-text-fill:-text-inputs-color;
+}
+.night{
+	-fx-text-fill:-default-text-color;
+}
+/*--------Hyperlink---------------------------------------------------*/
+.hyperlink{
+	-fx-border-color:transparent;
+}
+.hyperlink .text{
+	-fx-font-size: 12pt;
+	
+}
+/*--------Button---------------------------------------------------*/
+
+.button {   
+    -fx-background-color: -default-color;
+    -fx-background-radius: 5;    
+    -fx-padding: 5 15 5 15;
+}
+.button:hover,.button:focused {
+    -fx-background-color: -hover-color;
+}
+
+/*--------Text-input-----------------------------------------------*/
+
+.text-input {
+    -fx-highlight-fill: -highlight-text-color;
+	-fx-background-color: derive(-focused-color,50%);
+	-fx-text-fill:-text-inputs-color;
+	-fx-font-size:13;
+}
+.text-field:focused {
+    -fx-background-color: -default-text-color;
+    -fx-background-radius: 3.4, 2, 2;
+    -fx-prompt-text-fill: transparent;
+}
+/
+/*--------PopupMenu--------------------------------------------*/
+.text-feld .context-menu{
+	-fx-background-color: -lighter-color;
+}
+.context-menu {    
+    -fx-background-color: -lighter-color;
+    -fx-background-radius: 5;
+    -fx-padding: 2 2 2 2;  
+}
+.context-menu .separator {
+    -fx-padding: 2 4 2 4;
+}
+/*----------------Menu---------------------------------------------*/
+.menu {
+    -fx-padding: 5 10 5 10;
+}
+/*---------------MenuBar---------------------------*/
+.menu-bar .menu-button .label {
+    -fx-padding: 1 5 1 5;
+}
+.menu-bar {    
+    -fx-padding:  2 5 2 5;
+    -fx-spacing: 5;    
+}
+.menu-bar, .menu-bar .container{
+	-fx-background-color: -lighter-color;
+	-fx-font-size:15;
+	-fx-text-fill:white;
+}
+.menu-bar .menu-button {    
+	-fx-padding:  0 5 0 5;
+}
+.menu-bar .menu-button:hover,
+.menu-bar .menu-button:showing {    
+    -fx-background-color: -hover-color;
+	-fx-background-radius: 5;
+}
+
+/*------------------MenuItem------------------------------------*/
+.menu-item {
+    -fx-padding: 4 5 4 5;
+	-fx-background-radius: 5;
+	-fx-background-color: -hover-color;
+}
+.menu-item:hover{
+	-fx-background-color: -hover-color;
+    -fx-text-fill: -default-text-color;
+}
+.menu-item:focused .label {
+	-fx-background-color: -default-color;
+    -fx-text-fill: -default-text-color;
+}
+.menu-item:focused{
+    -fx-background-color: -default-color;
+}
+ /*----------Scroll-bar------------------------------------*/
+.scroll-bar > .increment-button,
+.scroll-bar > .decrement-button {
+     -fx-padding: 0.2em;
+	 -fx-background-color: -default-color;
+ }
+.scroll-bar > .increment-button >.arrow,
+.scroll-bar > .decrement-button >.arrow{
+	 -fx-text-fill: -default-text-color;
+ }
+.scroll-bar .thumb {
+     -fx-background-color: -hover-color;
+ }
+.scroll-bar{
+      -fx-background-color: derive(-lighter-color,30%);
+}
+ /*----------Corner------------------------------------*/
+.corner{
+	-fx-background-color: -default-color;
+}
+/* --------Tooltip-------------------*/
+.tooltip{
+	-fx-background-color: derive(-default-color,50%);
+	-fx-text-fill:-default-text-color;
+}
