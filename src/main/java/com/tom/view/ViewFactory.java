@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class ViewFactory {
     Scene scene = new Scene(parent);
     scene.getStylesheets().add(getClass().getResource("css/themeDefault.css").toExternalForm());
     Stage stage = new Stage();
+		stage.getIcons().add(new Image(getClass().getResourceAsStream("icons/appIcon.png")));
     activeStages.add(stage);
     stage.setScene(scene);
     stage.show();
