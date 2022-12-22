@@ -20,12 +20,13 @@ public class ViewFactory {
   private final ForecastManager forecastManager;
   private boolean mainWindowInitialized = false;
   private List<Stage> activeStages;
+  
   public ViewFactory(ForecastManager forecastManager) {
     this.forecastManager = forecastManager;
-    activeStages = new ArrayList<Stage>();
+    activeStages = new ArrayList<>();
   }
   
-  private void initializeStage(BaseController baseController){
+  private void initializeStage(BaseController baseController) {
     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(baseController.getFxmlFileName()));
     fxmlLoader.setController(baseController);
     
@@ -39,26 +40,29 @@ public class ViewFactory {
     Scene scene = new Scene(parent);
     scene.getStylesheets().add(getClass().getResource("css/themeDefault.css").toExternalForm());
     Stage stage = new Stage();
-		stage.getIcons().add(new Image(getClass().getResourceAsStream("icons/appIcon.png")));
+    stage.getIcons().add(new Image(getClass().getResourceAsStream("icons/appIcon.png")));
     activeStages.add(stage);
     stage.setScene(scene);
     stage.show();
     stage.setTitle(baseController.getWindowTitle());
   }
+  
   public void showWelcomeWindow() {
     BaseController controller = new WelcomeWindowController(forecastManager, this, "WelcomeWindow.fxml");
     initializeStage(controller);
   }
+  
   private void showMainWindow() {
     BaseController controller = new MainWindowController(forecastManager, this, "MainWindow.fxml");
     initializeStage(controller);
     mainWindowInitialized = true;
   }
   
-  public void showSettingsWindow(){
-    BaseController controller = new SettingsWindowController(forecastManager, this,"SettingsWindow.fxml");
+  public void showSettingsWindow() {
+    BaseController controller = new SettingsWindowController(forecastManager, this, "SettingsWindow.fxml");
     initializeStage(controller);
   }
+  
   public boolean isMainWindowInitialized() {
     return mainWindowInitialized;
   }

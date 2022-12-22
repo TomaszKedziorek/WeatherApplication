@@ -4,29 +4,36 @@ import com.google.gson.Gson;
 
 import java.net.http.HttpResponse;
 
-public class ForecastLoader extends ApiCaller{
+public class ForecastLoader {
   
   private ForecastForCity forecastForCity;
+  private final ApiCaller apiCaller;
+  private ApiCallResult apiCallResult;
+  
   
   public ForecastLoader(RequestCaller requestCaller) {
-    super(requestCaller);
+    this.apiCaller = new ApiCaller(requestCaller);
   }
   
   public ForecastForCity getForecastForCity() {
     return forecastForCity;
   }
   
-  @Override
-  protected HttpResponse<String> callForData(String endPoint) {
-    String language = "en-us";
-    String uri = "http://dataservice.accuweather.com/forecasts/v1/daily/5day/" + endPoint + "?apikey=" + Config.getAPI_KEY() + "&language=" + language + "&metric=true";
-    return getRequestCaller().callRequestAsync(uri);
+  public ApiCallResult getApiCallResult() {
+    return apiCallResult;
   }
-  public void getForecastsForCity(String cityKey) {
-    HttpResponse<String> httpResponse = callForData(cityKey);
-    if(isStatusCode200(httpResponse.statusCode())){
-      forecastForCity =  deserializeForecasts(httpResponse.body());
-    }else {
+  
+  private String createUri(String endPoint) {
+    String language = "en-us";
+    return "http://dataservice.accuweather.com/forecasts/v1/daily/5day/" + endPoint + "?apikey=" + Config.getApiKey() + "&language=" + language + "&metric=true";
+  }
+  
+  public void findForecastsForCityByCityKey(String cityKey) {
+    HttpResponse<String> httpResponse = apiCaller.callForData(createUri(cityKey));
+    apiCallResult = apiCaller.result(httpResponse.statusCode());
+    if (apiCallResult.isStatusCode200()) {
+      forecastForCity = deserializeForecasts(httpResponse.body());
+    } else {
       forecastForCity = null;
     }
   }

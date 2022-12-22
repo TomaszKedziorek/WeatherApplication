@@ -6,12 +6,12 @@ import com.tom.view.ViewFactory;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class Launcher extends Application {
   public static void main(String[] args) {
     launch(args);
   }
-  
-  PersistenceAccess persistenceAccess = new PersistenceAccess();
   
   @Override
   public void start(Stage stage) {
@@ -20,12 +20,18 @@ public class Launcher extends Application {
   }
   
   private void checkPersistence(ViewFactory viewFactory) {
-    persistenceAccess.loadFromPersistence();
-    if (Config.getAPI_KEY()==null || Config.getAPI_KEY().isEmpty()) {
-        viewFactory.showWelcomeWindow();
+    Config config = new Config();
+    try {
+      config = PersistenceAccess.loadFromPersistence();
+    } catch (IOException | ClassNotFoundException e) {
+    } finally {
+      Config.setApiKey(config.getApiKeyToSerialize());
+    }
+    if (Config.getApiKey() == null || Config.getApiKey().isEmpty()) {
+      viewFactory.showWelcomeWindow();
     } else {
       viewFactory.showMainWindowIfNotShown();
-      PersistenceAccess.rememberApiKEy = true;
+      PersistenceAccess.setIsRememberApiKey(true);
     }
   }
 }

@@ -29,7 +29,7 @@ public class WeatherCardCreator {
     createTemperatureGridPaneCells(gridPane, "Tmax", forecast.getTemperature().getMaximum());
     //Day
     createDayNightGridPaneCells(gridPane, "day", forecast.getDay());
-
+    
     //Night
     createDayNightGridPaneCells(gridPane, "night", forecast.getNight());
     
@@ -50,10 +50,13 @@ public class WeatherCardCreator {
     Label temperatureMinMax = new Label(String.valueOf(forecastTemperature.getValue()));
     Label temperatureMinMaxUnit = new Label("°" + forecastTemperature.getUnit());
     //Set constraints
+    //Layout of elements inside gridPane
     int colTemperatureMinMax = 0;
     if (minOrMax.equalsIgnoreCase("Tmin")) {
+      //cells for Tmin starts in column 2
       colTemperatureMinMax = 1;
     } else if (minOrMax.equalsIgnoreCase("Tmax")) {
+      //cells for Tmax starts in column 7
       colTemperatureMinMax = 7;
     }
     GridPane.setConstraints(temperatureMinMaxLabel, colTemperatureMinMax, 1);
@@ -62,21 +65,23 @@ public class WeatherCardCreator {
     pane.getChildren().addAll(temperatureMinMaxLabel, temperatureMinMax, temperatureMinMaxUnit);
     
   }
-  private Label createLabelWithClass(String cssClass, String text){
+  
+  private Label createLabelWithClass(String cssClass, String text) {
     Label label = new Label(text);
     label.getStyleClass().add(cssClass);
     return label;
   }
+  
   public void createDayNightGridPaneCells(GridPane pane, String dayOrNight, ForecastForCity.DayNight forecastDayNight) {
     //DayNight
-    Label dayNight = createLabelWithClass(dayOrNight,dayOrNight + ":");
+    Label dayNight = createLabelWithClass(dayOrNight, dayOrNight + ":");
     ImageView iconDayNight = IconResolver.getIconForGivenIconNumber(forecastDayNight.getIcon());
-    Label iconDayNightPhrase = createLabelWithClass(dayOrNight,forecastDayNight.getIconPhrase());
+    Label iconDayNightPhrase = createLabelWithClass(dayOrNight, forecastDayNight.getIconPhrase());
     //Precipitation
-    Label dayNightPrecipitationLabel = createLabelWithClass(dayOrNight,"Precipitation:");
-    Label dayNightPrecipitationType = createLabelWithClass(dayOrNight,"");
-    Label dayNightPrecipitationIntensityLabel = createLabelWithClass(dayOrNight,"");
-    Label dayNightPrecipitationIntensity = createLabelWithClass(dayOrNight,"");
+    Label dayNightPrecipitationLabel = createLabelWithClass(dayOrNight, "Precipitation:");
+    Label dayNightPrecipitationType = createLabelWithClass(dayOrNight, "");
+    Label dayNightPrecipitationIntensityLabel = createLabelWithClass(dayOrNight, "");
+    Label dayNightPrecipitationIntensity = createLabelWithClass(dayOrNight, "");
     if (forecastDayNight.hasPrecipitation()) {
       dayNightPrecipitationType.setText(forecastDayNight.getPrecipitationType());
       dayNightPrecipitationIntensityLabel.setText("Intensity:");
@@ -85,23 +90,26 @@ public class WeatherCardCreator {
       dayNightPrecipitationType.setText("no");
     }
     
+    //Layout of elements inside gridPane
     int rowForDayNight = 0;
     if (dayOrNight.equalsIgnoreCase("day")) {
+      //cells for Day starts in row 2
       rowForDayNight = 2;
     } else if (dayOrNight.equalsIgnoreCase("night")) {
+      //cells for Night starts in row 6
       rowForDayNight = 6;
     }
-    GridPane.setConstraints(dayNight,                            0, rowForDayNight,             3, 1);
-    GridPane.setConstraints(iconDayNight,                        3, rowForDayNight,             4, 1);
-    GridPane.setConstraints(iconDayNightPhrase,                  1, rowForDayNight + 1, 8, 1);
-    GridPane.setConstraints(dayNightPrecipitationLabel,          1, rowForDayNight + 2, 4, 1);
-    GridPane.setConstraints(dayNightPrecipitationType,           6, rowForDayNight + 2, 4, 1);
+    GridPane.setConstraints(dayNight, 0, rowForDayNight, 3, 1);
+    GridPane.setConstraints(iconDayNight, 3, rowForDayNight, 4, 1);
+    GridPane.setConstraints(iconDayNightPhrase, 1, rowForDayNight + 1, 8, 1);
+    GridPane.setConstraints(dayNightPrecipitationLabel, 1, rowForDayNight + 2, 4, 1);
+    GridPane.setConstraints(dayNightPrecipitationType, 6, rowForDayNight + 2, 4, 1);
     GridPane.setConstraints(dayNightPrecipitationIntensityLabel, 1, rowForDayNight + 3, 4, 1);
-    GridPane.setConstraints(dayNightPrecipitationIntensity,      6, rowForDayNight + 3, 4, 1);
-  
+    GridPane.setConstraints(dayNightPrecipitationIntensity, 6, rowForDayNight + 3, 4, 1);
+    
     pane.getChildren().addAll(dayNight, iconDayNight, iconDayNightPhrase);
     pane.getChildren().addAll(dayNightPrecipitationLabel, dayNightPrecipitationType, dayNightPrecipitationIntensityLabel, dayNightPrecipitationIntensity);
-  
+    
   }
-
+  
 }

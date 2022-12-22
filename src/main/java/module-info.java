@@ -11,4 +11,5 @@ module com.tom {
   opens com.tom.model;
   opens com.tom.model.persistence;
   exports com.tom;
+  exports com.tom.model;
 }

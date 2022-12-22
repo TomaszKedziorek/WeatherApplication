@@ -14,7 +14,7 @@ public class Config implements Serializable {
     this.apiKeyToSerialize = apiKeyToSerialize;
   }
   
-  public static String getAPI_KEY() {
+  public static String getApiKey() {
     return API_KEY;
   }
   
@@ -22,7 +22,7 @@ public class Config implements Serializable {
     return apiKeyToSerialize;
   }
   
-  public static void setAPI_KEY(String apiKey) {
+  public static void setApiKey(String apiKey) {
     API_KEY = apiKey;
   }
   

@@ -11,22 +11,20 @@ public class RequestCaller {
   private final HttpClient client;
   
   
-  public RequestCaller() {
-    client = HttpClient.newHttpClient();
+  public RequestCaller(HttpClient client) {
+    this.client = client;
   }
   
   private HttpRequest getNewRequest(String uri) {
-    uri = uri.replaceAll("\\s+","%20");
-    HttpRequest request = HttpRequest.newBuilder()
+    return HttpRequest.newBuilder()
             .uri(URI.create(uri))
             .GET()
             .build();
-    return request;
   }
+  
   public HttpResponse<String> callRequestAsync(String uri) {
     HttpRequest request = getNewRequest(uri);
-    HttpResponse<String> httpResponse = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+    return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
             .join();
-    return httpResponse;
   }
 }

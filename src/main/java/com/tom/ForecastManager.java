@@ -2,6 +2,9 @@ package com.tom;
 
 import com.tom.model.*;
 
+import java.net.http.HttpClient;
+import java.util.Optional;
+
 public class ForecastManager {
   
   private CityData upperCityData;
@@ -11,31 +14,31 @@ public class ForecastManager {
   private final RequestCaller requestCaller;
   
   public ForecastManager() {
-    this.requestCaller = new RequestCaller();
+    this.requestCaller = new RequestCaller(HttpClient.newHttpClient());
   }
   
   public RequestCaller getRequestCaller() {
     return requestCaller;
   }
   
- 
-  public ForecastForCity getForecastForCity(UpperOrLower upperOrLower) {
+  public Optional<ForecastForCity> getForecastForCity(UpperOrLower upperOrLower) {
     if (upperOrLower == UpperOrLower.UPPER) {
-      return upperForecastForCity;
+      return Optional.ofNullable(upperForecastForCity);
     } else if (upperOrLower == UpperOrLower.LOWER) {
-      return lowerForecastForCity;
+      return Optional.ofNullable(lowerForecastForCity);
     }
-    return null;
+    return Optional.empty();
   }
   
-  public CityData getCityData(UpperOrLower upperOrLower) {
+  public Optional<CityData> getCityData(UpperOrLower upperOrLower) {
     if (upperOrLower == UpperOrLower.UPPER) {
-      return upperCityData;
+      return Optional.ofNullable(upperCityData);
     } else if (upperOrLower == UpperOrLower.LOWER) {
-      return lowerCityData;
+      return Optional.ofNullable(lowerCityData);
     }
-    return null;
+    return Optional.empty();
   }
+  
   public void setCityData(UpperOrLower upperOrLower, CityData cityData) {
     if (upperOrLower == UpperOrLower.UPPER) {
       this.upperCityData = cityData;

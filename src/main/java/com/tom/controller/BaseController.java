@@ -10,10 +10,9 @@ import javafx.util.Duration;
 
 public abstract class BaseController {
   
-  private String windowTitle;
   protected final ForecastManager forecastManager;
   protected final ViewFactory viewFactory;
-  private String fxmlFileName;
+  private final String fxmlFileName;
   
   public BaseController(ForecastManager forecastManager, ViewFactory viewFactory, String fxmlFileName) {
     this.forecastManager = forecastManager;
