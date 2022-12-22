@@ -2,49 +2,41 @@ package com.tom.model;
 
 import java.net.http.HttpResponse;
 
-public abstract class ApiCaller {
+public class ApiCaller {
   private final RequestCaller requestCaller;
-  private String errorString;
   
-  public ApiCaller(RequestCaller requestCaller){
+  public ApiCaller(RequestCaller requestCaller) {
     this.requestCaller = requestCaller;
   }
-  protected abstract HttpResponse<String> callForData(String endPoint);
   
-  public RequestCaller getRequestCaller() {
+  private RequestCaller getRequestCaller() {
     return requestCaller;
   }
   
-  public String getErrorString() {
-    return errorString;
+  protected HttpResponse<String> callForData(String uri) {
+    return getRequestCaller().callRequestAsync(uri);
   }
   
-  public boolean isStatusCode200(int statusCode){
-    switch (statusCode) {
-      case 200:
-        errorString = "OK";
-        return true;
-      case 400:
-        errorString = "Request had bad syntax or the parameters supplied were invalid.";
-        return false;
-      case 401:
-        errorString = "Unauthorized. API authorization failed.";
-        return false;
-      case 403:
-        errorString = "Unauthorized. You do not have permission to access this endpoint.";
-        return false;
-      case 404:
-        errorString = "Server has not found a route matching the given URI.";
-        return false;
-      case 500:
-        errorString = "Server encountered an unexpected condition which prevented it from fulfilling the request.";
-        return false;
-      case 503:
-        errorString = "The allowed number of requests has been exceeded.";
-        return false;
-      default:
-        errorString = "Error occurred.";
-        return false;
+  public ApiCallResult result(int statusCode) {
+    if (statusCode >= 200 && statusCode < 300) {
+      return new ApiCallResult(true, "");
+    } else {
+      switch (statusCode) {
+        case 400:
+          return new ApiCallResult(false, "Request had bad syntax or the parameters supplied were invalid.");
+        case 401:
+          return new ApiCallResult(false, "Unauthorized. Check your API_KEY.");
+        case 403:
+          return new ApiCallResult(false, "Unauthorized. You do not have permission to access this endpoint. Check your API_KEY.");
+        case 404:
+          return new ApiCallResult(false, "Server has not found a route matching the given URI.");
+        case 500:
+          return new ApiCallResult(false, "Server encountered an unexpected condition which prevented it from fulfilling the request.");
+        case 503:
+          return new ApiCallResult(false, "The allowed number of requests has been exceeded.");
+        default:
+          return new ApiCallResult(false, "Error occurred. Please try again.");
+      }
     }
   }
 }

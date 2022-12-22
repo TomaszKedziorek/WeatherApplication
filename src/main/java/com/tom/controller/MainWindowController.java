@@ -14,7 +14,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class MainWindowController extends BaseController implements Initializable {
-  private final String windowTitle = "Main Window - WeatherApplication";
+  private static final String windowTitle = "Main Window - WeatherApplication";
   @FXML
   private Label lowerCityLabel;
   @FXML
@@ -31,8 +31,12 @@ public class MainWindowController extends BaseController implements Initializabl
   private HBox upperHbox;
   @FXML
   private HBox lowerHbox;
-  private CityFounder cityFounder;
-  private ForecastLoader forecastLoader;
+  @FXML
+  private Button upperPreviousForecastButton;
+  @FXML
+  private Button lowerPreviousForecastButton;
+  private final CityFounder cityFounder;
+  private final ForecastLoader forecastLoader;
   
   public MainWindowController(ForecastManager forecastManager, ViewFactory viewFactory, String fxmlFileName) {
     super(forecastManager, viewFactory, fxmlFileName);
@@ -49,11 +53,13 @@ public class MainWindowController extends BaseController implements Initializabl
   public void initialize(URL location, ResourceBundle resources) {
     setUpDefaultForecasts();
     setUpHbox();
+    upperPreviousForecastButton.setVisible(false);
+    lowerPreviousForecastButton.setVisible(false);
   }
   
   private void setUpDefaultForecasts() {
-    findForecastForCity(UpperOrLower.UPPER,"Warszawa");
-    findForecastForCity(UpperOrLower.LOWER,"Paris");
+    findForecastForCity(UpperOrLower.UPPER, "Warszawa");
+    findForecastForCity(UpperOrLower.LOWER, "Paris");
   }
   
   @FXML
@@ -65,12 +71,14 @@ public class MainWindowController extends BaseController implements Initializabl
   void lowerSearchButtonAction() {
     searchCityButtonAction(UpperOrLower.LOWER);
   }
+  
   @FXML
   void settingsAction() {
     viewFactory.showSettingsWindow();
   }
+  
   @FXML
-  void fileCloseButtonAction(){
+  void fileCloseButtonAction() {
     closeStage(upperCityLabel);
   }
   
@@ -81,38 +89,42 @@ public class MainWindowController extends BaseController implements Initializabl
       setCityLabel(upperOrLower, "");
       setUpPreviousForecastButton(upperOrLower);
     } else {
-        findForecastForCity(upperOrLower, textField.getText().trim());
+      findForecastForCity(upperOrLower, textField.getText().trim());
     }
   }
   
-  private void findForecastForCity(UpperOrLower upperOrLower,String cityName){
+  private void findForecastForCity(UpperOrLower upperOrLower, String cityName) {
     cityFounder.findCityByName(cityName);
     if (validCityData(upperOrLower)) {
-      forecastLoader.getForecastsForCity(forecastManager.getCityData(upperOrLower).getKey());
-      if (validForecastData(upperOrLower)) {
-        displayCityForecast(upperOrLower);
-      }
+      findForecastAndDisplayIfValid(upperOrLower);
     }
   }
   
   private boolean validCityData(UpperOrLower upperOrLower) {
     TextField textField = getTextField(upperOrLower);
     if (cityFounder.getCityData() == null) {
-      displayIfError(upperOrLower, String.valueOf(cityFounder.getErrorString()));
+      displayIfError(upperOrLower, String.valueOf(cityFounder.getApiCallResult().getErrorString()));
       return false;
     } else if (cityFounder.getCityData().size() == 0) {
       displayIfError(upperOrLower, "The localization " + textField.getText() + " could not be found.");
       return false;
-    }else {
+    } else {
       setCity(upperOrLower, cityFounder.getCityData().get(0));
       setContextMenuIfMoreCitiesFound(upperOrLower);
       return true;
     }
   }
   
+  private void findForecastAndDisplayIfValid(UpperOrLower upperOrLower) {
+    forecastLoader.findForecastsForCityByCityKey(forecastManager.getCityData(upperOrLower).get().getKey());
+    if (validForecastData(upperOrLower)) {
+      displayCityForecast(upperOrLower);
+    }
+  }
+  
   private boolean validForecastData(UpperOrLower upperOrLower) {
     if (forecastLoader.getForecastForCity() == null) {
-      displayIfError(upperOrLower, String.valueOf(forecastLoader.getErrorString()));
+      displayIfError(upperOrLower, String.valueOf(forecastLoader.getApiCallResult().getErrorString()));
       return false;
     } else {
       setForecast(upperOrLower, forecastLoader.getForecastForCity());
@@ -120,7 +132,7 @@ public class MainWindowController extends BaseController implements Initializabl
     }
   }
   
-  private void displayIfError(UpperOrLower upperOrLower, String errorText){
+  private void displayIfError(UpperOrLower upperOrLower, String errorText) {
     setErrorLabel(upperOrLower, errorText);
     setCityLabel(upperOrLower, "");
     setUpPreviousForecastButton(upperOrLower);
@@ -133,14 +145,17 @@ public class MainWindowController extends BaseController implements Initializabl
   private void setForecast(UpperOrLower upperOrLower, ForecastForCity forecastForCity) {
     forecastManager.setCityForecast(upperOrLower, forecastForCity);
   }
+  
   private void setUpPreviousForecastButton(UpperOrLower upperOrLower) {
-    Button backBtn = new Button("Previous forecast");
+    Button backBtn = setPreviousForecastButton(upperOrLower);
+    backBtn.setVisible(true);
     getHbox(upperOrLower).getChildren().add(backBtn);
     backBtn.setOnAction(event -> {
-      if (forecastManager.getForecastForCity(upperOrLower) == null) {
+      if (forecastManager.getForecastForCity(upperOrLower).isEmpty()) {
         setErrorLabel(upperOrLower, "No previous forecast found.");
-      }else{
+      } else {
         displayCityForecast(upperOrLower);
+        backBtn.setVisible(false);
       }
       
     });
@@ -149,8 +164,8 @@ public class MainWindowController extends BaseController implements Initializabl
   private void displayCityForecast(UpperOrLower upperOrLower) {
     HBox hBox = getHbox(upperOrLower);
     hBox.getChildren().clear();
-    setCityLabel(upperOrLower, localizationString(forecastManager.getCityData(upperOrLower)));
-    setUpCardForEachDay(forecastManager.getForecastForCity(upperOrLower), hBox);
+    setCityLabel(upperOrLower, localizationString(forecastManager.getCityData(upperOrLower).get()));
+    setUpCardForEachDay(forecastManager.getForecastForCity(upperOrLower).get(), hBox);
   }
   
   private void setContextMenuIfMoreCitiesFound(UpperOrLower upperOrLower) {
@@ -159,20 +174,15 @@ public class MainWindowController extends BaseController implements Initializabl
     for (CityData city : cityFounder.getCityData()) {
       MenuItem item = new MenuItem(localizationString(city));
       item.setOnAction(event -> {
-        setCity(upperOrLower,city);
-        forecastLoader.getForecastsForCity(forecastManager.getCityData(upperOrLower).getKey());
-        if (validForecastData(upperOrLower)) {
-          displayCityForecast(upperOrLower);
-        }
+        setCity(upperOrLower, city);
+        findForecastAndDisplayIfValid(upperOrLower);
       });
       contextMenu.getItems().add(item);
     }
     textField.setContextMenu(contextMenu);
     contextMenu.show(textField, Side.BOTTOM, 0, 0);
     //show context menu on click: left also!
-    textField.setOnMouseClicked(event -> {
-      contextMenu.show(textField, Side.BOTTOM, 0, 0);
-    });
+    textField.setOnMouseClicked(event -> contextMenu.show(textField, Side.BOTTOM, 0, 0));
   }
   
   private TextField getTextField(UpperOrLower upperOrLower) {
@@ -198,6 +208,15 @@ public class MainWindowController extends BaseController implements Initializabl
       return upperErrorLabel;
     } else if (upperOrLower == UpperOrLower.LOWER) {
       return lowerErrorLabel;
+    }
+    return null;
+  }
+  
+  private Button setPreviousForecastButton(UpperOrLower upperOrLower) {
+    if (upperOrLower == UpperOrLower.UPPER) {
+      return upperPreviousForecastButton;
+    } else if (upperOrLower == UpperOrLower.LOWER) {
+      return lowerPreviousForecastButton;
     }
     return null;
   }

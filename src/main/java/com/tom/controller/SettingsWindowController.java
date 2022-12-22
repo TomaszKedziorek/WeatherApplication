@@ -13,8 +13,8 @@ import javafx.scene.control.TextField;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class SettingsWindowController extends BaseController implements Initializable {
-  private final String windowTitle = "Settings - WeatherApplication";
+public class SettingsWindowController extends RememberApiKeyController implements Initializable {
+  private static final String windowTitle = "Settings - WeatherApplication";
   
   @FXML
   private TextField apiKeyTextField;
@@ -26,16 +26,14 @@ public class SettingsWindowController extends BaseController implements Initiali
   public SettingsWindowController(ForecastManager forecastManager, ViewFactory viewFactory, String fxmlFileName) {
     super(forecastManager, viewFactory, fxmlFileName);
   }
+  
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    setTooltip(PersistenceAccess.getApiKeyFileLocation(),rememberKeyCheckbox);
-    apiKeyTextField.setText(Config.getAPI_KEY());
-    if(PersistenceAccess.rememberApiKEy){
-      rememberKeyCheckbox.setSelected(true);
-    }else {
-      rememberKeyCheckbox.setSelected(false);
-    }
+    setTooltip(PersistenceAccess.getApiKeyFileLocation(), rememberKeyCheckbox);
+    apiKeyTextField.setText(Config.getApiKey());
+    rememberKeyCheckbox.setSelected(PersistenceAccess.isRememberApiKey());
   }
+  
   @Override
   public String getWindowTitle() {
     return windowTitle;
@@ -44,22 +42,13 @@ public class SettingsWindowController extends BaseController implements Initiali
   @FXML
   void okButtonAction() {
     String apiKey = apiKeyTextField.getText().trim();
-    if (!apiKey.equals(Config.getAPI_KEY()) || apiKey.isEmpty()) {
-      Config.setAPI_KEY(apiKeyTextField.getText().trim());
+    if (!apiKey.equals(Config.getApiKey()) || apiKey.isEmpty()) {
+      Config.setApiKey(apiKeyTextField.getText().trim());
     }
-    remember();
-    closeStage(errorLabel);
+    
+    rememberAndCloseIfNoProblem(rememberKeyCheckbox, errorLabel);
   }
   
-  private void remember() {
-    if(rememberKeyCheckbox.isSelected()){
-      PersistenceAccess.saveToPersistence(Config.getAPI_KEY());
-      PersistenceAccess.rememberApiKEy = true;
-    }else {
-      PersistenceAccess.saveToPersistence(null);
-      PersistenceAccess.rememberApiKEy = false;
-    }
-  }
   
   @FXML
   void cancelButtonAction() {

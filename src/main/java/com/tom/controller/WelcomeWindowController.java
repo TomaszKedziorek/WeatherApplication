@@ -17,8 +17,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class WelcomeWindowController extends BaseController implements Initializable {
-  private final String windowTitle = "WeatherApplication - Welcome";
+public class WelcomeWindowController extends RememberApiKeyController implements Initializable {
+  private static final String windowTitle = "WeatherApplication - Welcome";
   @FXML
   private TextField apiKeyTextField;
   @FXML
@@ -30,6 +30,7 @@ public class WelcomeWindowController extends BaseController implements Initializ
   public WelcomeWindowController(ForecastManager forecastManager, ViewFactory viewFactory, String fxmlFileName) {
     super(forecastManager, viewFactory, fxmlFileName);
   }
+  
   @Override
   public String getWindowTitle() {
     return windowTitle;
@@ -37,7 +38,7 @@ public class WelcomeWindowController extends BaseController implements Initializ
   
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    setTooltip(PersistenceAccess.getApiKeyFileLocation(),rememberKeyCheckbox);
+    setTooltip(PersistenceAccess.getApiKeyFileLocation(), rememberKeyCheckbox);
   }
   
   @FXML
@@ -55,22 +56,14 @@ public class WelcomeWindowController extends BaseController implements Initializ
   
   @FXML
   void okButtonAction() {
-    if(apiKeyTextField.getText().trim().isEmpty()){
+    if (apiKeyTextField.getText().trim().isEmpty()) {
       errorLabel.setText("Please enter your AccuWeather API key to continue.");
-    }else {
-      Config.setAPI_KEY(apiKeyTextField.getText().trim());
-      remember();
-      viewFactory.showMainWindowIfNotShown();
-      closeStage(errorLabel);
-    }
-  }
-  private void remember() {
-    if(rememberKeyCheckbox.isSelected()){
-      PersistenceAccess.saveToPersistence(Config.getAPI_KEY());
-      PersistenceAccess.rememberApiKEy = true;
-    }else {
-      PersistenceAccess.saveToPersistence(null);
-      PersistenceAccess.rememberApiKEy = false;
+    } else {
+      Config.setApiKey(apiKeyTextField.getText().trim());
+      
+      if (rememberAndCloseIfNoProblem(rememberKeyCheckbox, errorLabel)) {
+        viewFactory.showMainWindowIfNotShown();
+      }
     }
   }
   
@@ -78,5 +71,5 @@ public class WelcomeWindowController extends BaseController implements Initializ
   void cancelButtonAction() {
     closeStage(errorLabel);
   }
-
+  
 }
